@@ -46,6 +46,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
   const [modele, setModele] = useState("");
   const [annee, setAnnee] = useState("");
   const [etat, setEtat] = useState("");
+  const [motivation, setMotivation] = useState("");
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   const [localisation, setLocalisation] = useState("");
@@ -96,6 +97,9 @@ function FormModal({ onClose }: { onClose: () => void }) {
       if (!email.trim()) e["email"] = true;
       if (!tel.trim()) e["tel"] = true;
     }
+    if (etape === 3) {
+      if (!motivation) e["motivation"] = true;
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -106,6 +110,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
     const marque = marqueSelect === "Autre" ? marqueAutre : marqueSelect;
     const fd = new FormData();
     fd.append("typeVelo", typeVelo);
+    fd.append("motivation", motivation);
     fd.append("marque", marque); fd.append("modele", modele);
     fd.append("annee", annee); fd.append("etat", etat);
     fd.append("prix", ""); fd.append("localisation", localisation);
@@ -318,8 +323,46 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 3 : Infos complémentaires ── */}
+            {/* ── ÉTAPE 3 : Motivation ── */}
             {etape === 3 && (
+              <div>
+                <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Pourquoi souhaitez-vous vendre votre vélo ?</h2>
+                <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Cela nous aide à vous proposer la meilleure offre.</p>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  {[
+                    { value: "vendre_vite", label: "Vendre mon vélo le plus vite possible" },
+                    { value: "meilleur_prix", label: "Obtenir le meilleur prix, même si ça prend un peu plus de temps" },
+                    { value: "financer_nouveau", label: "Financer l'achat d'un nouveau vélo" },
+                    { value: "connaitre_valeur", label: "Juste connaître la valeur de mon vélo (je me renseigne)" },
+                  ].map(opt => (
+                    <button
+                      key={opt.value} type="button"
+                      onClick={() => { setMotivation(opt.value); clr("motivation"); }}
+                      style={{
+                        padding: "16px 20px", borderRadius: "10px", cursor: "pointer", textAlign: "left",
+                        border: `2px solid ${motivation === opt.value ? "#1e3a2f" : errors["motivation"] ? "#ef4444" : "#e5e5e5"}`,
+                        background: motivation === opt.value ? "#f0f7f5" : "white",
+                        fontFamily: "inherit", transition: "all 0.15s",
+                        fontSize: "15px", fontWeight: motivation === opt.value ? 700 : 500, color: "#262f2c",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#1e3a2f"; e.currentTarget.style.background = "#f0f7f5"; }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = motivation === opt.value ? "#1e3a2f" : errors["motivation"] ? "#ef4444" : "#e5e5e5";
+                        e.currentTarget.style.background = motivation === opt.value ? "#f0f7f5" : "white";
+                      }}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {errors["motivation"] && <ErrMsg msg="Veuillez sélectionner une option." />}
+                <BtnNext />
+                <div style={{ textAlign: "center" }}><BtnBack /></div>
+              </div>
+            )}
+
+            {/* ── ÉTAPE 4 : Infos complémentaires ── */}
+            {etape === 4 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "4px" }}>
                   Pour aller plus loin <span style={{ fontSize: "16px", fontWeight: 400, color: "#6b7280" }}>(facultatif)</span>

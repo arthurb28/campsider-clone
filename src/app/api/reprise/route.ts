@@ -135,6 +135,7 @@ export async function POST(req: NextRequest) {
       prix:         get("prix"),
       localisation: get("localisation"),
       typeVelo:     get("typeVelo"),
+      motivation:   get("motivation"),
       infos:        get("infos"),
       dossier:      "",
     };
@@ -175,7 +176,7 @@ export async function POST(req: NextRequest) {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "A:M",
+      range: "A:N",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[
@@ -190,6 +191,7 @@ export async function POST(req: NextRequest) {
           row.prix,
           row.localisation,
           row.typeVelo,
+          row.motivation,
           row.infos,
           row.dossier,
         ]],
