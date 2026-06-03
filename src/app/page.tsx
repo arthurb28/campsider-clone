@@ -15,7 +15,7 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main style={{ maxWidth: "1360px", margin: "0 auto" }}>
+      <main style={{ maxWidth: "1360px", margin: "0 auto", width: "100%" }}>
         <HeroBanner />
         <CategoryCards />
         <TrustpilotSection />

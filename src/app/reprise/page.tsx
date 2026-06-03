@@ -45,8 +45,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
   const [modele, setModele] = useState("");
   const [annee, setAnnee] = useState("");
   const [etat, setEtat] = useState("");
-  const [situation, setSituation] = useState("");
-  const [situationAutre, setSituationAutre] = useState("");
   const [email, setEmail] = useState("");
   const [tel, setTel] = useState("");
   const [localisation, setLocalisation] = useState("");
@@ -94,9 +92,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
       if (!etat) e["etat"] = true;
     }
     if (etape === 2) {
-      if (!(situation === "Autre" ? situationAutre.trim() : situation)) e["situation"] = true;
-    }
-    if (etape === 3) {
       if (!email.trim()) e["email"] = true;
       if (!tel.trim()) e["tel"] = true;
     }
@@ -108,14 +103,13 @@ function FormModal({ onClose }: { onClose: () => void }) {
 
   async function handleSubmit() {
     const marque = marqueSelect === "Autre" ? marqueAutre : marqueSelect;
-    const sit = situation === "Autre" ? situationAutre : situation;
-    const infosComplet = `Type de vélo : ${typeVelo}\nSituation : ${sit}${infos ? "\n\n" + infos : ""}`;
     const fd = new FormData();
+    fd.append("typeVelo", typeVelo);
     fd.append("marque", marque); fd.append("modele", modele);
     fd.append("annee", annee); fd.append("etat", etat);
     fd.append("prix", ""); fd.append("localisation", localisation);
     fd.append("email", email); fd.append("tel", tel);
-    fd.append("infos", infosComplet);
+    fd.append("infos", infos);
     const pf = photosRef.current?.files;
     if (pf) for (let i = 0; i < pf.length; i++) fd.append("photos", pf[i]);
     const ff = factureRef.current?.files?.[0];
@@ -276,29 +270,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 2 : Situation ── */}
+            {/* ── ÉTAPE 2 : Coordonnées ── */}
             {etape === 2 && (
-              <div>
-                <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Quelle est votre situation ?</h2>
-                <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Cela nous aide à vous accompagner au mieux.</p>
-                <div style={FG}>
-                  <label style={LABEL}>Votre démarche *</label>
-                  <select style={f(!!errors["situation"])} value={situation} onChange={(e) => { setSituation(e.target.value); clr("situation"); }}>
-                    <option value="">Sélectionnez</option>
-                    {SITUATIONS.map(s => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                  {situation === "Autre" && (
-                    <input type="text" placeholder="Précisez votre situation" value={situationAutre} style={f(!!errors["situation"])} onChange={(e) => { setSituationAutre(e.target.value); clr("situation"); }} />
-                  )}
-                </div>
-                {errors["situation"] && <ErrMsg msg="Veuillez indiquer votre situation." />}
-                <BtnNext />
-                <div style={{ textAlign: "center" }}><BtnBack /></div>
-              </div>
-            )}
-
-            {/* ── ÉTAPE 3 : Coordonnées ── */}
-            {etape === 3 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Vos coordonnées</h2>
                 <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Pour qu&apos;un expert vous recontacte sous 48h.</p>
@@ -325,8 +298,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 4 : Infos complémentaires ── */}
-            {etape === 4 && (
+            {/* ── ÉTAPE 3 : Infos complémentaires ── */}
+            {etape === 3 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "4px" }}>
                   Pour aller plus loin <span style={{ fontSize: "16px", fontWeight: 400, color: "#6b7280" }}>(facultatif)</span>
@@ -386,7 +359,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
 // ── HERO ──────────────────────────────────────────────────────────────────────
 function HeroSection({ onOpen }: { onOpen: () => void }) {
   return (
-    <section style={{ backgroundImage: "url('/images/hero/slider-reprise.png')", backgroundSize: "cover", backgroundPosition: "center", padding: "110px 24px 100px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+    <section style={{ backgroundImage: "url('/images/Gemini_Generated_Image_kniiq7kniiq7knii (1).png')", backgroundSize: "cover", backgroundPosition: "center", padding: "110px 24px 100px", textAlign: "center", position: "relative", overflow: "hidden" }}>
       <div style={{ position: "absolute", inset: 0, background: "rgba(20, 40, 30, 0.6)", pointerEvents: "none" }} />
       <div style={{ maxWidth: "780px", margin: "0 auto", position: "relative" }}>
         <span style={{ display: "inline-block", background: "rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.92)", fontSize: "12px", fontWeight: 700, padding: "7px 18px", borderRadius: "20px", marginBottom: "28px", letterSpacing: "0.8px", border: "1px solid rgba(255,255,255,0.2)", textTransform: "uppercase" }}>
@@ -426,11 +399,136 @@ function ReassuranceBar() {
   );
 }
 
+// ── AVIS TRUSTPILOT ───────────────────────────────────────────────────────────
+const AVIS_REPRISE = [
+  {
+    id: 1,
+    title: "Vente rapide et au bon prix",
+    body: "J'ai vendu mon Specialized Tarmac en moins de 2 semaines. L'équipe m'a proposé une offre très correcte et tout s'est passé sans accroc.",
+    author: "Thomas R.",
+    time: "Il y a 2 jours",
+  },
+  {
+    id: 2,
+    title: "Service client au top",
+    body: "Estimation reçue en 24h comme promis. Très professionnel, ils connaissent vraiment bien les vélos. Je recommande à 100 %.",
+    author: "Marine D.",
+    time: "Il y a 4 jours",
+  },
+  {
+    id: 3,
+    title: "Processus simple et transparent",
+    body: "Aucune mauvaise surprise. Le prix annoncé était le prix payé. Paiement reçu rapidement après la vente. Parfait.",
+    author: "Julien B.",
+    time: "Il y a 1 semaine",
+  },
+  {
+    id: 4,
+    title: "Enfin une solution fiable",
+    body: "J'avais essayé Le Bon Coin sans succès. Campsider a géré tout à ma place et mon Canyon a trouvé preneur en 10 jours.",
+    author: "Sophie L.",
+    time: "Il y a 1 semaine",
+  },
+  {
+    id: 5,
+    title: "Très bonne expérience",
+    body: "Deuxième vente avec Campsider, toujours aussi satisfait. Équipe réactive, estimation honnête et transaction sécurisée.",
+    author: "Nicolas M.",
+    time: "Il y a 2 semaines",
+  },
+];
+
+function TrustpilotRepriseSection() {
+  const [offset, setOffset] = React.useState(0);
+  const visible = 3;
+  const max = AVIS_REPRISE.length - visible;
+
+  function prev() { setOffset(o => Math.max(0, o - 1)); }
+  function next() { setOffset(o => Math.min(max, o + 1)); }
+
+  return (
+    <section style={{ backgroundColor: "white", padding: "28px 24px", borderBottom: "1px solid #e5e5e5" }}>
+      <div style={{ maxWidth: "1360px", margin: "0 auto", display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+
+        {/* Score Trustpilot compact */}
+        <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+          <div>
+            <p style={{ fontSize: "14px", fontWeight: 800, color: "#262f2c", margin: 0 }}>Excellent</p>
+            <p style={{ color: "#00b67a", fontSize: "14px", letterSpacing: "1px", margin: "1px 0 0" }}>★★★★★</p>
+          </div>
+          <div style={{ width: "1px", height: "30px", backgroundColor: "#e5e5e5" }} />
+          <div>
+            <p style={{ fontSize: "11px", color: "#6b7280", margin: 0 }}>4 809 avis</p>
+            <p style={{ fontSize: "12px", fontWeight: 700, color: "#191919", margin: "2px 0 0" }}>★ Trustpilot</p>
+          </div>
+        </div>
+
+        {/* Cartes défilantes */}
+        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px", minWidth: 0, overflow: "hidden" }}>
+          <button onClick={prev} disabled={offset === 0} aria-label="Précédent"
+            style={{ flexShrink: 0, width: "28px", height: "28px", borderRadius: "50%", border: "1px solid #e5e5e5", background: offset === 0 ? "#f5f5f5" : "white", cursor: offset === 0 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: offset === 0 ? "#ccc" : "#262f2c" }}
+          >‹</button>
+
+          <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", minWidth: 0 }}>
+            {AVIS_REPRISE.slice(offset, offset + visible).map(avis => (
+              <div key={avis.id} style={{ border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px 14px", display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <span style={{ color: "#00b67a", fontSize: "12px", letterSpacing: "1px" }}>★★★★★</span>
+                  <span style={{ fontSize: "10px", color: "#9ca3af" }}>✓ Sur invitation</span>
+                </div>
+                <p style={{ fontSize: "13px", fontWeight: 700, color: "#262f2c", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{avis.title}</p>
+                <p style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.4, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{avis.body}</p>
+                <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{avis.author} · {avis.time}</p>
+              </div>
+            ))}
+          </div>
+
+          <button onClick={next} disabled={offset >= max} aria-label="Suivant"
+            style={{ flexShrink: 0, width: "28px", height: "28px", borderRadius: "50%", border: "1px solid #e5e5e5", background: offset >= max ? "#f5f5f5" : "white", cursor: offset >= max ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: offset >= max ? "#ccc" : "#262f2c" }}
+          >›</button>
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+// ── RAISONS DE VENDRE ─────────────────────────────────────────────────────────
+const RAISONS = [
+  { img: "/images/C'est simple.png", label: "C'est simple", desc: "Pas d'annonce à gérer, on s'occupe de tout" },
+  { img: "/images/C'est rapide.png", label: "C'est rapide", desc: "Estimation en quelques clics et paiement express" },
+  { img: "/images/C'est sécurisé.png", label: "C'est sécurisé", desc: "Paiement garanti, transaction couverte par Campsider" },
+  { img: "/images/Prix juste.png", label: "Prix juste", desc: "Estimation par des experts du vélo d'occasion, pas de frais cachés" },
+];
+
+function RaisonsSection() {
+  return (
+    <section style={{ backgroundColor: "#f4f2ee", padding: "64px 24px", borderBottom: "1px solid #e5e5e5" }}>
+      <div style={{ maxWidth: "1360px", margin: "0 auto" }}>
+        <h2 style={{ textAlign: "center", fontSize: "clamp(22px, 3vw, 30px)", fontWeight: 800, color: "#262f2c", marginBottom: "40px", letterSpacing: "-0.3px" }}>
+          4 Raisons de vendre votre vélo à Campsider
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4" style={{ gap: "16px" }}>
+          {RAISONS.map(r => (
+            <div key={r.label} style={{ backgroundColor: "white", border: "1.5px solid #e5e5e5", borderRadius: "14px", padding: "28px 24px", display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div style={{ width: "56px", height: "56px", backgroundColor: "#1D3D2D", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <img src={r.img} alt={r.label} style={{ width: "40px", height: "40px", objectFit: "contain" }} />
+              </div>
+              <p style={{ fontSize: "16px", fontWeight: 800, color: "#262f2c", margin: 0 }}>{r.label}</p>
+              <p style={{ fontSize: "14px", color: "#6b7280", lineHeight: 1.55, margin: 0 }}>{r.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── COMMENT ÇA MARCHE ─────────────────────────────────────────────────────────
 const STEPS = [
-  { num: "01", icon: "📝", title: "Décrivez votre vélo", desc: "Remplissez le formulaire en quelques minutes : marque, modèle, année, état et photos." },
-  { num: "02", icon: "📞", title: "Recevez une offre", desc: "Nos experts vous contactent sous 48h avec une estimation personnalisée et sans engagement." },
-  { num: "03", icon: "✨", title: "On s'occupe de tout", desc: "Campsider gère la vente et la transaction. Vous recevez votre paiement directement." },
+  { num: "01", img: "/images/Décrivez votre vélo.png", title: "Décrivez votre vélo", desc: "Remplissez le formulaire en quelques minutes : marque, modèle, année, état et photos." },
+  { num: "02", img: "/images/Recevez une offre.png", title: "Recevez une offre", desc: "Nos experts vous contactent sous 48h avec une estimation personnalisée et sans engagement." },
+  { num: "03", img: "/images/On s'occupe de tout.png", title: "On s'occupe de tout", desc: "Campsider gère la vente et la transaction. Vous recevez votre paiement directement." },
 ];
 
 function HowItWorks({ onOpen }: { onOpen: () => void }) {
@@ -448,7 +546,9 @@ function HowItWorks({ onOpen }: { onOpen: () => void }) {
               onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}
             >
               <div style={{ fontSize: "48px", fontWeight: 800, color: "#d8d8d8", lineHeight: 1, marginBottom: "18px" }}>{step.num}</div>
-              <div style={{ width: "52px", height: "52px", backgroundColor: "#1e3a2f", borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px", fontSize: "24px" }}>{step.icon}</div>
+              <div style={{ width: "56px", height: "56px", backgroundColor: "#1D3D2D", borderRadius: "16px", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "20px" }}>
+                <img src={step.img} alt={step.title} style={{ width: "40px", height: "40px", objectFit: "contain" }} />
+              </div>
               <div style={{ fontSize: "18px", fontWeight: 800, color: "#262f2c", marginBottom: "10px" }}>{step.title}</div>
               <p style={{ fontSize: "15px", color: "#6b7280", lineHeight: 1.65 }}>{step.desc}</p>
             </div>
@@ -471,8 +571,7 @@ function HowItWorks({ onOpen }: { onOpen: () => void }) {
 
 // ── FAQ ───────────────────────────────────────────────────────────────────────
 const FAQ_ITEMS = [
-  { q: "Quels vélos acceptez-vous ?", a: "Tous les vélos en bon état, de 2015 à aujourd'hui, des grandes marques (Specialized, Trek, Giant, Cannondale, BMC, Pinarello, etc.)." },
-  { q: "Combien de temps prend la reprise ?", a: "Notre équipe vous contacte sous 48h après réception de votre demande. Le processus complet de vente dure généralement 1 à 3 semaines." },
+{ q: "Combien de temps prend la reprise ?", a: "Notre équipe vous contacte sous 48h après réception de votre demande. Le processus complet de vente dure généralement 1 à 3 semaines." },
   { q: "Comment suis-je payé ?", a: "Une fois le vélo vendu sur notre plateforme, vous recevez le paiement directement sur votre compte bancaire. La transaction est 100 % sécurisée par Campsider." },
   { q: "Est-ce vraiment gratuit ?", a: "Le dépôt de demande et l'estimation sont totalement gratuits et sans engagement. Vous n'avez aucune obligation de vendre votre vélo via Campsider." },
 ];
@@ -508,12 +607,19 @@ export default function ReprisePage() {
   const ouvrir = () => setModalOuvert(true);
   const fermer = () => setModalOuvert(false);
 
+  useEffect(() => {
+    window.addEventListener("ouvrir-reprise", ouvrir);
+    return () => window.removeEventListener("ouvrir-reprise", ouvrir);
+  }, []);
+
   return (
     <>
       <Header />
       <main>
         <HeroSection onOpen={ouvrir} />
         <ReassuranceBar />
+        <TrustpilotRepriseSection />
+        <RaisonsSection />
         <HowItWorks onOpen={ouvrir} />
         <FAQSection />
       </main>

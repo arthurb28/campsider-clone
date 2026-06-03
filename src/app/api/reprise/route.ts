@@ -134,8 +134,9 @@ export async function POST(req: NextRequest) {
       etat:         get("etat"),
       prix:         get("prix"),
       localisation: get("localisation"),
+      typeVelo:     get("typeVelo"),
       infos:        get("infos"),
-      dossier:      "", // lien dossier Drive (rempli si fichiers fournis)
+      dossier:      "",
     };
 
     const photoFiles  = formData.getAll("photos") as File[];
@@ -174,7 +175,7 @@ export async function POST(req: NextRequest) {
 
     await sheets.spreadsheets.values.append({
       spreadsheetId: process.env.GOOGLE_SHEET_ID,
-      range: "A:L",
+      range: "A:M",
       valueInputOption: "USER_ENTERED",
       requestBody: {
         values: [[
@@ -188,6 +189,7 @@ export async function POST(req: NextRequest) {
           row.etat,
           row.prix,
           row.localisation,
+          row.typeVelo,
           row.infos,
           row.dossier,
         ]],
@@ -202,45 +204,95 @@ export async function POST(req: NextRequest) {
         to: row.email,
         subject: `✅ Demande ${row.numeroDemande} bien reçue — ${row.marque} ${row.modele}`,
         html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #262f2c;">
-            <div style="background-color: #262f2c; padding: 24px 32px;">
-              <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">Campsider</h1>
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #262f2c; background: #ffffff;">
+
+            <!-- En-tête -->
+            <div style="background-color: #1D3D2D; padding: 28px 40px; text-align: center;">
+              <p style="color: white; margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">Campsider</p>
+              <p style="color: rgba(255,255,255,0.6); margin: 4px 0 0; font-size: 13px; letter-spacing: 1px; text-transform: uppercase;">Reprise de vélo</p>
             </div>
-            <div style="padding: 32px; background: #f9f9f9; border-bottom: 3px solid #4c8076;">
-              <h2 style="margin: 0 0 8px; font-size: 20px;">Votre demande a bien été reçue ✅</h2>
-              <p style="margin: 0; color: #6b7280; font-size: 15px;">Un expert vous contactera sous <strong>48h</strong>.</p>
-            </div>
-            <div style="padding: 32px;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-                <tr>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5; color: #6b7280; width: 40%;">Numéro de demande</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5; font-weight: 700;">${row.numeroDemande}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5; color: #6b7280;">Vélo</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5;">${row.marque} ${row.modele} (${row.annee})</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5; color: #6b7280;">État</td>
-                  <td style="padding: 10px 0; border-bottom: 1px solid #e5e5e5;">${row.etat.replace("_", " ")}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 10px 0; color: #6b7280;">Date</td>
-                  <td style="padding: 10px 0;">${row.timestamp}</td>
-                </tr>
-              </table>
-              <div style="margin-top: 28px; padding: 20px; background: #f0f7f5; border-radius: 8px; border-left: 4px solid #4c8076;">
-                <p style="margin: 0; font-size: 14px; color: #262f2c;">
-                  🚴 Notre équipe analyse votre dossier et vous contacte sous <strong>48h</strong> avec une estimation personnalisée. Sans engagement.
-                </p>
-              </div>
-              <p style="margin-top: 28px; font-size: 13px; color: #9ca3af;">
-                Vous avez une question ? Répondez simplement à cet email.
+
+            <!-- Accroche -->
+            <div style="padding: 40px 40px 24px; background: #f9f9f9; border-bottom: 1px solid #e5e5e5; text-align: center;">
+              <p style="font-size: 36px; margin: 0 0 12px;">✅</p>
+              <h1 style="margin: 0 0 10px; font-size: 22px; font-weight: 800; color: #1D3D2D;">Votre demande est bien enregistrée</h1>
+              <p style="margin: 0; font-size: 15px; color: #6b7280; line-height: 1.6;">
+                Merci pour votre confiance. Un expert Campsider prendra contact avec vous<br/>
+                <strong style="color: #262f2c;">dans les 48 heures</strong> pour vous présenter notre estimation.
               </p>
             </div>
-            <div style="background: #262f2c; padding: 20px 32px; text-align: center;">
-              <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.5);">© 2026 Campsider — La 1ère marketplace de sport outdoor d'occasion</p>
+
+            <!-- Récapitulatif -->
+            <div style="padding: 32px 40px;">
+              <p style="font-size: 11px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 16px;">Récapitulatif de votre demande</p>
+              <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+                <tr>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; color: #9ca3af; width: 42%;">Numéro de demande</td>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; font-weight: 700; color: #1D3D2D;">${row.numeroDemande}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; color: #9ca3af;">Type de vélo</td>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0;">${row.typeVelo}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; color: #9ca3af;">Vélo</td>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0;">${row.marque} ${row.modele} — ${row.annee}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; color: #9ca3af;">État</td>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0;">${row.etat.replace(/_/g, " ")}</td>
+                </tr>
+                ${row.localisation ? `<tr>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0; color: #9ca3af;">Localisation</td>
+                  <td style="padding: 11px 0; border-bottom: 1px solid #f0f0f0;">${row.localisation}</td>
+                </tr>` : ""}
+                <tr>
+                  <td style="padding: 11px 0; color: #9ca3af;">Date de la demande</td>
+                  <td style="padding: 11px 0;">${row.timestamp}</td>
+                </tr>
+              </table>
             </div>
+
+            <!-- Bloc étapes -->
+            <div style="padding: 0 40px 36px;">
+              <p style="font-size: 11px; font-weight: 800; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 16px;">La suite</p>
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: #f4f2ee; border-radius: 10px;">
+                  <span style="font-size: 20px; flex-shrink: 0;">📞</span>
+                  <div>
+                    <p style="margin: 0 0 3px; font-size: 14px; font-weight: 700; color: #262f2c;">Un expert vous contacte sous 48h</p>
+                    <p style="margin: 0; font-size: 13px; color: #6b7280;">Nous analysons votre dossier et vous proposons une estimation personnalisée, sans engagement.</p>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: #f4f2ee; border-radius: 10px;">
+                  <span style="font-size: 20px; flex-shrink: 0;">🤝</span>
+                  <div>
+                    <p style="margin: 0 0 3px; font-size: 14px; font-weight: 700; color: #262f2c;">Vous acceptez (ou non) l'offre</p>
+                    <p style="margin: 0; font-size: 13px; color: #6b7280;">Aucune obligation. Vous gardez le contrôle à chaque étape.</p>
+                  </div>
+                </div>
+                <div style="display: flex; align-items: flex-start; gap: 14px; padding: 16px; background: #f4f2ee; border-radius: 10px;">
+                  <span style="font-size: 20px; flex-shrink: 0;">💳</span>
+                  <div>
+                    <p style="margin: 0 0 3px; font-size: 14px; font-weight: 700; color: #262f2c;">Paiement rapide et sécurisé</p>
+                    <p style="margin: 0; font-size: 13px; color: #6b7280;">Une fois votre vélo vendu, vous êtes payé directement. Pas de frais cachés.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- CTA -->
+            <div style="padding: 0 40px 40px; text-align: center;">
+              <p style="font-size: 13px; color: #9ca3af; margin: 0;">
+                Une question ? Répondez directement à cet email, nous serons ravis de vous aider.
+              </p>
+            </div>
+
+            <!-- Pied de page -->
+            <div style="background: #1D3D2D; padding: 20px 40px; text-align: center;">
+              <p style="margin: 0; font-size: 12px; color: rgba(255,255,255,0.45);">© 2026 Campsider — La 1ère marketplace de sport outdoor d'occasion</p>
+            </div>
+
           </div>
         `,
       });

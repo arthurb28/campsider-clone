@@ -23,31 +23,15 @@ export function NewsletterSection({ className }: { className?: string }) {
         <p style={{ fontSize: 14, color: "#9ca3af", margin: 0 }}>
           Et recevez nos bons plans, réductions, conseils directement sur votre boite mail !
         </p>
-        <div style={{ display: "flex", gap: 8, marginTop: 16, width: "100%", maxWidth: 480 }}>
+        <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full" style={{ maxWidth: 480 }}>
           <input
             type="email"
             placeholder="Email"
-            style={{
-              flex: 1,
-              border: "1px solid #e5e5e5",
-              borderRadius: 4,
-              padding: "10px 16px",
-              fontSize: 14,
-              outline: "none",
-            }}
+            className="flex-1"
+            style={{ border: "1px solid #e5e5e5", borderRadius: 4, padding: "10px 16px", fontSize: 14, outline: "none", width: "100%" }}
           />
           <button
-            style={{
-              background: "#be4a09",
-              color: "white",
-              borderRadius: 4,
-              padding: "10px 24px",
-              fontSize: 14,
-              fontWeight: 500,
-              border: "none",
-              cursor: "pointer",
-              whiteSpace: "nowrap",
-            }}
+            style={{ background: "#be4a09", color: "white", borderRadius: 4, padding: "10px 24px", fontSize: 14, fontWeight: 500, border: "none", cursor: "pointer", whiteSpace: "nowrap" }}
           >
             S&apos;inscrire
           </button>

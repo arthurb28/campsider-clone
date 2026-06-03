@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const SLIDES = [
@@ -8,12 +8,12 @@ const SLIDES = [
   { src: "/images/hero/slider-2-desktop.png", alt: "L'expert des équipements de sport d'occasion" },
 ];
 const SLIDE_COUNT = SLIDES.length;
-const AUTO_DELAY = 5000; // millisecondes entre chaque slide
+const AUTO_DELAY = 5000;
 
 export function HeroBanner() {
   const [activeSlide, setActiveSlide] = useState(0);
+  const touchStartX = useRef<number | null>(null);
 
-  // Avance automatique
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveSlide((prev) => (prev + 1) % SLIDE_COUNT);
@@ -29,25 +29,35 @@ export function HeroBanner() {
     setActiveSlide((prev) => (prev + 1) % SLIDE_COUNT);
   }
 
-  return (
-    <div style={{ position: "relative", width: "100%", overflow: "hidden", backgroundColor: "#f5f0e8" }}>
+  function onTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
 
-      {/* Images en fondu */}
+  function onTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const delta = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(delta) > 40) delta > 0 ? handleNext() : handlePrev();
+    touchStartX.current = null;
+  }
+
+  return (
+    // aspect-[16/7] mobile → image visible entièrement, md:aspect-[16/5] desktop
+    <div
+      className="relative w-full aspect-[4/3] sm:aspect-[16/7] md:aspect-[16/5]"
+      style={{ backgroundColor: "#f5f0e8" }}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+    >
+      {/* Images — toutes dans le même espace, centrées, sans crop */}
       {SLIDES.map((slide, i) => (
         <img
           key={slide.src}
           src={slide.src}
           alt={slide.alt}
-          className="w-full"
+          className="absolute inset-0 w-full h-full"
           style={{
-            display: "block",
-            maxHeight: "480px",
-            objectFit: "cover",
+            objectFit: "contain",
             objectPosition: "center",
-            position: i === activeSlide ? "relative" : "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
             opacity: i === activeSlide ? 1 : 0,
             transition: "opacity 0.7s ease",
             zIndex: i === activeSlide ? 1 : 0,
@@ -59,44 +69,34 @@ export function HeroBanner() {
       <button
         onClick={handlePrev}
         aria-label="Slide précédent"
-        style={{
-          position: "absolute", top: "50%", left: "16px", transform: "translateY(-50%)",
-          width: "40px", height: "40px", borderRadius: "9999px",
-          background: "rgba(255,255,255,0.9)", border: "none",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          cursor: "pointer", zIndex: 10,
-        }}
+        className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center"
+        style={{ left: 12, zIndex: 10, width: 36, height: 36, borderRadius: "9999px", background: "rgba(255,255,255,0.9)", border: "none", cursor: "pointer" }}
       >
-        <ChevronLeft size={20} color="#262f2c" />
+        <ChevronLeft size={18} color="#262f2c" />
       </button>
 
       {/* Flèche droite */}
       <button
         onClick={handleNext}
         aria-label="Slide suivant"
-        style={{
-          position: "absolute", top: "50%", right: "16px", transform: "translateY(-50%)",
-          width: "40px", height: "40px", borderRadius: "9999px",
-          background: "rgba(255,255,255,0.9)", border: "none",
-          display: "flex", alignItems: "center", justifyContent: "center",
-          cursor: "pointer", zIndex: 10,
-        }}
+        className="absolute top-1/2 -translate-y-1/2 flex items-center justify-center"
+        style={{ right: 12, zIndex: 10, width: 36, height: 36, borderRadius: "9999px", background: "rgba(255,255,255,0.9)", border: "none", cursor: "pointer" }}
       >
-        <ChevronRight size={20} color="#262f2c" />
+        <ChevronRight size={18} color="#262f2c" />
       </button>
 
       {/* Points de pagination */}
-      <div style={{ position: "absolute", bottom: "16px", left: "50%", transform: "translateX(-50%)", display: "flex", gap: "8px", zIndex: 10 }}>
+      <div className="absolute left-1/2 -translate-x-1/2 flex gap-2" style={{ bottom: 12, zIndex: 10 }}>
         {SLIDES.map((_, i) => (
           <button
             key={i}
             onClick={() => setActiveSlide(i)}
             aria-label={`Aller au slide ${i + 1}`}
             style={{
-              width: activeSlide === i ? "24px" : "8px",
-              height: "8px",
+              width: activeSlide === i ? "20px" : "7px",
+              height: "7px",
               borderRadius: activeSlide === i ? "4px" : "9999px",
-              background: activeSlide === i ? "#ffffff" : "rgba(255,255,255,0.5)",
+              background: activeSlide === i ? "#262f2c" : "rgba(0,0,0,0.25)",
               border: "none", cursor: "pointer", padding: 0,
               transition: "width 0.2s, border-radius 0.2s",
             }}

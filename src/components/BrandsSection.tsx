@@ -20,7 +20,7 @@ const brands: Brand[] = [
 
 export function BrandsSection() {
   return (
-    <section className={cn("bg-white")}>
+    <section className={cn("bg-white")} style={{ overflow: "hidden" }}>
       <div
         style={{
           padding: "24px 24px 16px",
@@ -40,6 +40,8 @@ export function BrandsSection() {
           display: "flex",
           gap: 12,
           overflowX: "auto",
+          width: "100%",
+          minWidth: 0,
           msOverflowStyle: "none",
           scrollbarWidth: "none",
         } as CSSProperties}
@@ -51,14 +53,14 @@ export function BrandsSection() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              flex: "0 0 180px",
+              flex: "0 0 clamp(130px, 40vw, 180px)",
             }}
           >
             <div
               style={{
                 border: "1px solid #e5e5e5",
                 background: "white",
-                width: 180,
+                width: "100%",
                 height: 80,
                 display: "flex",
                 alignItems: "center",

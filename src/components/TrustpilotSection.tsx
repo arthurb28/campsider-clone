@@ -33,7 +33,9 @@ export function TrustpilotSection() {
         background: "#ffffff",
         gap: "32px",
         maxWidth: "1310px",
+        width: "100%",
         margin: "0 auto",
+        overflow: "hidden",
       }}
     >
       {/* Left block */}
@@ -109,6 +111,7 @@ export function TrustpilotSection() {
         {/* Left arrow */}
         <button
           aria-label="Avis précédents"
+          className="hidden md:flex"
           style={{
             flexShrink: 0,
             width: "36px",
@@ -116,7 +119,6 @@ export function TrustpilotSection() {
             borderRadius: "9999px",
             border: "1px solid #e5e5e5",
             background: "#ffffff",
-            display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",
@@ -201,6 +203,7 @@ export function TrustpilotSection() {
         {/* Right arrow */}
         <button
           aria-label="Avis suivants"
+          className="hidden md:flex"
           style={{
             flexShrink: 0,
             width: "36px",
@@ -208,7 +211,6 @@ export function TrustpilotSection() {
             borderRadius: "9999px",
             border: "1px solid #e5e5e5",
             background: "#ffffff",
-            display: "flex",
             alignItems: "center",
             justifyContent: "center",
             cursor: "pointer",

@@ -58,7 +58,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   return (
-    <article style={{ cursor: "pointer", flex: "0 0 250px", background: "white" }}>
+    <article style={{ cursor: "pointer", flex: "0 0 clamp(170px, 55vw, 250px)", background: "white" }}>
       <div
         style={{
           position: "relative",
@@ -179,64 +179,18 @@ export function ProductCard({ product }: ProductCardProps) {
 
 export function BestDealsSection() {
   return (
-    <section className={cn("bg-white")}>
-      <div
-        style={{
-          padding: "24px 24px 16px",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-        }}
-      >
-        <div>
+    <section className={cn("bg-white")} style={{ overflow: "hidden" }}>
+      <div className="flex items-start justify-between" style={{ padding: "20px 24px 16px", gap: 12 }}>
+        <div style={{ minWidth: 0 }}>
           <h2 style={{ fontSize: 18, fontWeight: 500, color: "#262f2c", margin: 0 }}>Nos meilleurs deals</h2>
           <p style={{ fontSize: 14, color: "#9ca3af", margin: "2px 0 0" }}>Ils n&apos;attendent que vous</p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <button
-            style={{
-              backgroundColor: "#be4a09",
-              color: "white",
-              borderRadius: 4,
-              padding: "8px 20px",
-              fontSize: 14,
-              fontWeight: 500,
-              border: "none",
-              cursor: "pointer",
-            }}
-          >
+        <div className="flex items-center flex-shrink-0" style={{ gap: 8 }}>
+          <button style={{ backgroundColor: "#be4a09", color: "white", borderRadius: 4, padding: "8px 14px", fontSize: 13, fontWeight: 500, border: "none", cursor: "pointer", whiteSpace: "nowrap" }}>
             Voir plus
           </button>
-          <button
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "1px solid #e5e5e5",
-              background: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-          >
-            ‹
-          </button>
-          <button
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "1px solid #e5e5e5",
-              background: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-          >
-            ›
-          </button>
+          <button className="hidden md:flex" style={{ width: 32, height: 32, borderRadius: "50%", border: "1px solid #e5e5e5", background: "white", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>‹</button>
+          <button className="hidden md:flex" style={{ width: 32, height: 32, borderRadius: "50%", border: "1px solid #e5e5e5", background: "white", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>›</button>
         </div>
       </div>
       <div
@@ -245,6 +199,8 @@ export function BestDealsSection() {
           display: "flex",
           gap: 16,
           overflowX: "auto",
+          width: "100%",
+          minWidth: 0,
           msOverflowStyle: "none",
           scrollbarWidth: "none",
         } as CSSProperties}

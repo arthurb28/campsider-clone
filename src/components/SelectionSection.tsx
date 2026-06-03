@@ -22,7 +22,7 @@ const selections: SelectionItem[] = [
 
 export function SelectionSection() {
   return (
-    <section className={cn("bg-white")}>
+    <section className={cn("bg-white")} style={{ overflow: "hidden" }}>
       <div
         style={{
           padding: "24px 24px 16px",
@@ -42,16 +42,18 @@ export function SelectionSection() {
           display: "flex",
           gap: 12,
           overflowX: "auto",
+          width: "100%",
+          minWidth: 0,
           msOverflowStyle: "none",
           scrollbarWidth: "none",
         } as CSSProperties}
       >
         {selections.map((item) => (
-          <div key={item.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 240px" }}>
+          <div key={item.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", flex: "0 0 clamp(170px, 55vw, 240px)" }}>
             <div
               style={{
-                flex: "0 0 240px",
-                height: 200,
+                flex: "0 0 clamp(170px, 55vw, 240px)",
+                height: 180,
                 position: "relative",
                 overflow: "hidden",
                 borderRadius: 4,

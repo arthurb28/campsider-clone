@@ -15,6 +15,7 @@ export function CategoryCards() {
       style={{
         padding: "24px 24px 32px",
         background: "#ffffff",
+        overflow: "hidden",
       }}
     >
       <div
@@ -23,6 +24,8 @@ export function CategoryCards() {
           display: "flex",
           gap: "12px",
           overflowX: "auto",
+          width: "100%",
+          minWidth: 0,
         }}
       >
         {categories.map((cat) => (
@@ -30,7 +33,7 @@ export function CategoryCards() {
             key={cat.id}
             href="#"
             style={{
-              flex: "0 0 190px",
+              flex: "0 0 clamp(130px, 38vw, 190px)",
               border: "1px solid #e5e5e5",
               background: "#ffffff",
               cursor: "pointer",
