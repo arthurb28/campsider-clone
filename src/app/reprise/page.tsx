@@ -16,10 +16,11 @@ const TYPES_VELO = [
 ];
 const MARQUES = ["Specialized", "Trek", "Giant", "Cannondale", "BMC", "Scott", "Orbea", "Bianchi", "Colnago", "De Rosa", "Pinarello", "Autre"];
 const ETATS = [
-  { value: "comme_neuf", label: "Comme neuf" },
-  { value: "tres_bon", label: "Très bon état" },
-  { value: "bon", label: "Bon état" },
-  { value: "correct", label: "État correct" },
+  { value: "comme_neuf", label: "Comme neuf", desc: "Jamais ou très peu utilisé, aucune marque visible" },
+  { value: "tres_bon", label: "Très bon état", desc: "Quelques traces légères d'utilisation, tout fonctionne parfaitement" },
+  { value: "bon", label: "Bon état", desc: "Utilisation normale visible, aucun défaut fonctionnel" },
+  { value: "correct", label: "État correct", desc: "Signes d'usure importants mais utilisable, peut nécessiter un entretien" },
+  { value: "mauvais", label: "Mauvais état", desc: "Défauts significatifs, nécessite des réparations" },
 ];
 const SITUATIONS = [
   "Je souhaite vendre rapidement",
@@ -256,12 +257,31 @@ function FormModal({ onClose }: { onClose: () => void }) {
                     </select>
                   </div>
 
-                  <div style={FG}>
+                  <div style={{ ...FG, gridColumn: "1 / -1" }}>
                     <label style={LABEL}>État général *</label>
-                    <select style={f(!!errors["etat"])} value={etat} onChange={(e) => { setEtat(e.target.value); clr("etat"); }}>
-                      <option value="">Sélectionnez</option>
-                      {ETATS.map(et => <option key={et.value} value={et.value}>{et.label}</option>)}
-                    </select>
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                      {ETATS.map(et => (
+                        <button
+                          key={et.value} type="button"
+                          onClick={() => { setEtat(et.value); clr("etat"); }}
+                          style={{
+                            padding: "12px 16px", borderRadius: "10px", cursor: "pointer", textAlign: "left",
+                            border: `2px solid ${etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5"}`,
+                            background: etat === et.value ? "#f0f7f5" : "white",
+                            fontFamily: "inherit", transition: "all 0.15s",
+                            display: "flex", flexDirection: "column", gap: "2px",
+                          }}
+                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#1e3a2f"; e.currentTarget.style.background = "#f0f7f5"; }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5";
+                            e.currentTarget.style.background = etat === et.value ? "#f0f7f5" : "white";
+                          }}
+                        >
+                          <span style={{ fontSize: "14px", fontWeight: 700, color: "#262f2c" }}>{et.label}</span>
+                          <span style={{ fontSize: "12px", color: "#6b7280" }}>{et.desc}</span>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
