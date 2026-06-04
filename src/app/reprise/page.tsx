@@ -33,6 +33,8 @@ const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: currentYear - 2014 }, (_, i) => currentYear - i);
 
 // ── MODAL FORMULAIRE ──────────────────────────────────────────────────────────
+const TOTAL_ETAPES = 6;
+
 function FormModal({ onClose }: { onClose: () => void }) {
   const [etape, setEtape] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -56,14 +58,12 @@ function FormModal({ onClose }: { onClose: () => void }) {
   const photosRef = useRef<HTMLInputElement>(null);
   const factureRef = useRef<HTMLInputElement>(null);
 
-  // Fermer sur Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
-  // Bloquer le scroll du body
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => { document.body.style.overflow = ""; };
@@ -72,7 +72,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
   const f = (err = false): React.CSSProperties => ({
     width: "100%", padding: "11px 14px",
     border: `1.5px solid ${err ? "#ef4444" : "#e5e5e5"}`,
-    borderRadius: "8px", fontSize: "15px", fontFamily: "inherit",
+    borderRadius: "8px", fontSize: "16px", fontFamily: "inherit",
     color: "#262f2c", background: "white", outline: "none",
     transition: "border-color 0.2s",
   });
@@ -86,20 +86,18 @@ function FormModal({ onClose }: { onClose: () => void }) {
 
   function valider() {
     const e: Record<string, boolean> = {};
-    if (etape === 1) {
-      if (!typeVelo) e["typeVelo"] = true;
+    if (etape === 1 && !typeVelo) e["typeVelo"] = true;
+    if (etape === 2) {
       if (!(marqueSelect === "Autre" ? marqueAutre.trim() : marqueSelect)) e["marque"] = true;
       if (!modele.trim()) e["modele"] = true;
       if (!annee) e["annee"] = true;
-      if (!etat) e["etat"] = true;
     }
-    if (etape === 2) {
+    if (etape === 3 && !etat) e["etat"] = true;
+    if (etape === 4) {
       if (!email.trim()) e["email"] = true;
       if (!tel.trim()) e["tel"] = true;
     }
-    if (etape === 3) {
-      if (!motivation) e["motivation"] = true;
-    }
+    if (etape === 5 && !motivation) e["motivation"] = true;
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -173,6 +171,28 @@ function FormModal({ onClose }: { onClose: () => void }) {
     );
   }
 
+  function ProgressBar() {
+    return (
+      <div style={{ marginBottom: "32px" }}>
+        <div style={{ display: "flex", gap: "4px" }}>
+          {Array.from({ length: TOTAL_ETAPES }, (_, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1, height: "4px", borderRadius: "2px",
+                backgroundColor: i < etape ? "#1e3a2f" : "#e5e5e5",
+                transition: "background-color 0.3s",
+              }}
+            />
+          ))}
+        </div>
+        <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "8px" }}>
+          Étape {etape} sur {TOTAL_ETAPES}
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, backgroundColor: "white", overflowY: "auto" }}>
 
@@ -200,19 +220,18 @@ function FormModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <>
-            {/* ── ÉTAPE 1 : vélo + infos ── */}
+            <ProgressBar />
+
+            {/* ── ÉTAPE 1 : Type de vélo ── */}
             {etape === 1 && (
               <div>
                 <div style={{ marginBottom: "28px" }}>
                   <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>
-                    Obtenez votre estimation gratuite
+                    Quel type de vélo souhaitez-vous vendre ?
                   </h2>
-                  <p style={{ fontSize: "15px", color: "#6b7280" }}>En moins de 2 minutes. Sans engagement.</p>
+                  <p style={{ fontSize: "15px", color: "#6b7280" }}>Estimation gratuite. Sans engagement.</p>
                 </div>
-
-                {/* Type de vélo */}
-                <p style={{ ...LABEL, marginBottom: "10px" }}>Type de vélo *</p>
-                <div className="grid grid-cols-4 sm:grid-cols-4" style={{ gap: "8px", marginBottom: "24px" }}>
+                <div className="grid grid-cols-4 sm:grid-cols-4" style={{ gap: "8px" }}>
                   {TYPES_VELO.map((t) => (
                     <button
                       key={t.id} type="button"
@@ -235,8 +254,20 @@ function FormModal({ onClose }: { onClose: () => void }) {
                     </button>
                   ))}
                 </div>
+                {errors["typeVelo"] && <ErrMsg msg="Veuillez sélectionner un type de vélo." />}
+                <BtnNext label="Continuer →" />
+              </div>
+            )}
 
-                {/* Marque / Modèle / Année / État */}
+            {/* ── ÉTAPE 2 : Marque / Modèle / Année ── */}
+            {etape === 2 && (
+              <div>
+                <div style={{ marginBottom: "28px" }}>
+                  <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>
+                    Décrivez votre vélo
+                  </h2>
+                  <p style={{ fontSize: "15px", color: "#6b7280" }}>Ces informations nous permettent d&apos;affiner l&apos;estimation.</p>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2" style={{ gap: "14px" }}>
                   <div style={FG}>
                     <label style={LABEL}>Marque *</label>
@@ -248,55 +279,64 @@ function FormModal({ onClose }: { onClose: () => void }) {
                       <input type="text" placeholder="Précisez la marque" value={marqueAutre} style={f(!!errors["marque"])} onChange={(e) => { setMarqueAutre(e.target.value); clr("marque"); }} />
                     )}
                   </div>
-
                   <div style={FG}>
                     <label style={LABEL}>Modèle *</label>
                     <input type="text" placeholder="ex : Tarmac SL7 Comp" value={modele} style={f(!!errors["modele"])} onChange={(e) => { setModele(e.target.value); clr("modele"); }} />
                   </div>
-
-                  <div style={FG}>
+                  <div style={{ ...FG, gridColumn: "1 / -1" }}>
                     <label style={LABEL}>Année *</label>
                     <select style={f(!!errors["annee"])} value={annee} onChange={(e) => { setAnnee(e.target.value); clr("annee"); }}>
-                      <option value="">Sélectionnez</option>
+                      <option value="">Sélectionnez l&apos;année</option>
                       {YEARS.map(y => <option key={y} value={y}>{y}</option>)}
                     </select>
                   </div>
-
-                  <div style={{ ...FG, gridColumn: "1 / -1" }}>
-                    <label style={LABEL}>État général *</label>
-                    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                      {ETATS.map(et => (
-                        <button
-                          key={et.value} type="button"
-                          onClick={() => { setEtat(et.value); clr("etat"); }}
-                          style={{
-                            padding: "12px 16px", borderRadius: "10px", cursor: "pointer", textAlign: "left",
-                            border: `2px solid ${etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5"}`,
-                            background: etat === et.value ? "#f0f7f5" : "white",
-                            fontFamily: "inherit", transition: "all 0.15s",
-                            display: "flex", flexDirection: "column", gap: "2px",
-                          }}
-                          onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#1e3a2f"; e.currentTarget.style.background = "#f0f7f5"; }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.borderColor = etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5";
-                            e.currentTarget.style.background = etat === et.value ? "#f0f7f5" : "white";
-                          }}
-                        >
-                          <span style={{ fontSize: "14px", fontWeight: 700, color: "#262f2c" }}>{et.label}</span>
-                          <span style={{ fontSize: "12px", color: "#6b7280" }}>{et.desc}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
                 </div>
-
                 {Object.values(errors).some(Boolean) && <ErrMsg msg="Veuillez remplir tous les champs obligatoires." />}
-                <BtnNext label="Obtenir mon estimation →" />
+                <BtnNext label="Continuer →" />
+                <div style={{ textAlign: "center" }}><BtnBack /></div>
               </div>
             )}
 
-            {/* ── ÉTAPE 2 : Coordonnées ── */}
-            {etape === 2 && (
+            {/* ── ÉTAPE 3 : État général ── */}
+            {etape === 3 && (
+              <div>
+                <div style={{ marginBottom: "28px" }}>
+                  <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>
+                    Dans quel état est votre vélo ?
+                  </h2>
+                  <p style={{ fontSize: "15px", color: "#6b7280" }}>Soyez honnête — cela garantit une estimation juste.</p>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                  {ETATS.map(et => (
+                    <button
+                      key={et.value} type="button"
+                      onClick={() => { setEtat(et.value); clr("etat"); }}
+                      style={{
+                        padding: "14px 16px", borderRadius: "10px", cursor: "pointer", textAlign: "left",
+                        border: `2px solid ${etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5"}`,
+                        background: etat === et.value ? "#f0f7f5" : "white",
+                        fontFamily: "inherit", transition: "all 0.15s",
+                        display: "flex", flexDirection: "column", gap: "2px",
+                      }}
+                      onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#1e3a2f"; e.currentTarget.style.background = "#f0f7f5"; }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = etat === et.value ? "#1e3a2f" : errors["etat"] ? "#ef4444" : "#e5e5e5";
+                        e.currentTarget.style.background = etat === et.value ? "#f0f7f5" : "white";
+                      }}
+                    >
+                      <span style={{ fontSize: "14px", fontWeight: 700, color: "#262f2c" }}>{et.label}</span>
+                      <span style={{ fontSize: "12px", color: "#6b7280" }}>{et.desc}</span>
+                    </button>
+                  ))}
+                </div>
+                {errors["etat"] && <ErrMsg msg="Veuillez sélectionner l'état de votre vélo." />}
+                <BtnNext label="Obtenir mon estimation →" />
+                <div style={{ textAlign: "center" }}><BtnBack /></div>
+              </div>
+            )}
+
+            {/* ── ÉTAPE 4 : Coordonnées ── */}
+            {etape === 4 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Vos coordonnées</h2>
                 <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Pour qu&apos;un expert vous recontacte sous 48h.</p>
@@ -323,8 +363,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 3 : Motivation ── */}
-            {etape === 3 && (
+            {/* ── ÉTAPE 5 : Motivation ── */}
+            {etape === 5 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Pourquoi souhaitez-vous vendre votre vélo ?</h2>
                 <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Cela nous aide à vous proposer la meilleure offre.</p>
@@ -361,8 +401,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 4 : Infos complémentaires ── */}
-            {etape === 4 && (
+            {/* ── ÉTAPE 6 : Infos complémentaires ── */}
+            {etape === 6 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "4px" }}>
                   Pour aller plus loin <span style={{ fontSize: "16px", fontWeight: 400, color: "#6b7280" }}>(facultatif)</span>
@@ -371,7 +411,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
                   Ces éléments affinent notre estimation. Vous pouvez directement envoyer votre demande.
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-
                   <div style={FG}>
                     <label style={LABEL}>Photos du vélo</label>
                     <label style={{ border: "2px dashed #e5e5e5", borderRadius: "8px", padding: "18px 16px", textAlign: "center", cursor: "pointer", backgroundColor: "#f9f9f9", display: "block", transition: "border-color 0.2s" }}
@@ -385,7 +424,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
                     </label>
                     {photosLabel && <span style={{ fontSize: "13px", color: "#6b7280" }}>{photosLabel}</span>}
                   </div>
-
                   <div style={FG}>
                     <label style={LABEL}>Facture d&apos;origine</label>
                     <label style={{ border: "2px dashed #e5e5e5", borderRadius: "8px", padding: "18px 16px", textAlign: "center", cursor: "pointer", backgroundColor: "#f9f9f9", display: "block", transition: "border-color 0.2s" }}
@@ -399,14 +437,12 @@ function FormModal({ onClose }: { onClose: () => void }) {
                     </label>
                     {factureLabel && <span style={{ fontSize: "13px", color: "#6b7280" }}>{factureLabel}</span>}
                   </div>
-
                   <div style={FG}>
                     <label style={LABEL}>Informations complémentaires</label>
                     <textarea placeholder="Options, accessoires, historique d'entretien, modifications…" value={infos} onChange={(e) => setInfos(e.target.value)}
                       style={{ ...f(false), resize: "vertical", minHeight: "90px" }} />
                   </div>
                 </div>
-
                 {submitError && <ErrMsg msg={submitError} />}
                 <BtnNext label="Envoyer ma demande →" onPress={handleSubmit} />
                 <div style={{ textAlign: "center" }}><BtnBack /></div>
