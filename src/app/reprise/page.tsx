@@ -33,8 +33,6 @@ const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: currentYear - 2014 }, (_, i) => currentYear - i);
 
 // ── MODAL FORMULAIRE ──────────────────────────────────────────────────────────
-const TOTAL_ETAPES = 6;
-
 function FormModal({ onClose }: { onClose: () => void }) {
   const [etape, setEtape] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -171,27 +169,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
     );
   }
 
-  function ProgressBar() {
-    return (
-      <div style={{ marginBottom: "32px" }}>
-        <div style={{ display: "flex", gap: "4px" }}>
-          {Array.from({ length: TOTAL_ETAPES }, (_, i) => (
-            <div
-              key={i}
-              style={{
-                flex: 1, height: "4px", borderRadius: "2px",
-                backgroundColor: i < etape ? "#1e3a2f" : "#e5e5e5",
-                transition: "background-color 0.3s",
-              }}
-            />
-          ))}
-        </div>
-        <p style={{ fontSize: "12px", color: "#9ca3af", marginTop: "8px" }}>
-          Étape {etape} sur {TOTAL_ETAPES}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 1000, backgroundColor: "white", overflowY: "auto" }}>
@@ -220,8 +197,6 @@ function FormModal({ onClose }: { onClose: () => void }) {
           </div>
         ) : (
           <>
-            <ProgressBar />
-
             {/* ── ÉTAPE 1 : Type de vélo ── */}
             {etape === 1 && (
               <div>
