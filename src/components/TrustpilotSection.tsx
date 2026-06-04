@@ -26,198 +26,59 @@ const reviews = [
 
 export function TrustpilotSection() {
   return (
-    <section
-      className="flex flex-col md:flex-row items-start"
-      style={{
-        padding: "32px 24px",
-        background: "#ffffff",
-        gap: "32px",
-        maxWidth: "1310px",
-        width: "100%",
-        margin: "0 auto",
-        overflow: "hidden",
-      }}
-    >
-      {/* Left block */}
-      <div style={{ flexShrink: 0 }}>
-        <p
-          style={{
-            fontSize: "28px",
-            fontWeight: 700,
-            color: "#262f2c",
-            margin: "0 0 4px 0",
-          }}
-        >
-          Excellent
-        </p>
-        <p
-          style={{
-            color: "#00b67a",
-            fontSize: "24px",
-            letterSpacing: "2px",
-            margin: "0 0 6px 0",
-          }}
-        >
-          ★★★★★
-        </p>
-        <p
-          style={{
-            fontSize: "13px",
-            color: "#6b7280",
-            margin: "0 0 8px 0",
-          }}
-        >
-          Basé sur{" "}
-          <strong>
-            <u>4 809 avis</u>
-          </strong>
-        </p>
-        <p
-          style={{
-            fontSize: "16px",
-            fontWeight: 600,
-            color: "#191919",
-            margin: "0 0 8px 0",
-          }}
-        >
-          ★ Trustpilot
-        </p>
-        <a
-          href="#"
-          style={{
-            fontSize: "13px",
-            textDecoration: "underline",
-            color: "#262f2c",
-            display: "block",
-            marginTop: "8px",
-          }}
-        >
-          Nos avis 5 étoiles
-        </a>
-      </div>
+    <section style={{ padding: "24px 24px", background: "#ffffff", width: "100%", overflow: "hidden" }}>
+      <div style={{ maxWidth: "1310px", margin: "0 auto", width: "100%" }}>
 
-      {/* Right block */}
-      <div
-        className="hide-scrollbar"
-        style={{
-          flex: 1,
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          overflowX: "auto",
-          minWidth: 0,
-        }}
-      >
-        {/* Left arrow */}
-        <button
-          aria-label="Avis précédents"
-          className="hidden md:flex"
-          style={{
-            flexShrink: 0,
-            width: "36px",
-            height: "36px",
-            borderRadius: "9999px",
-            border: "1px solid #e5e5e5",
-            background: "#ffffff",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-          }}
-        >
-          <ChevronLeft size={16} color="#262f2c" />
-        </button>
-
-        {/* Review cards */}
-        {reviews.map((review) => (
-          <div
-            key={review.id}
-            style={{
-              flex: "0 0 220px",
-              border: "1px solid #e5e5e5",
-              padding: "16px",
-              display: "flex",
-              flexDirection: "column",
-              gap: "8px",
-              minWidth: 0,
-            }}
-          >
-            {/* Top row: stars + badge */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <span style={{ color: "#00b67a", fontSize: "16px" }}>
-                ★★★★★
-              </span>
-              <span
-                style={{
-                  fontSize: "11px",
-                  color: "#6b7280",
-                  marginLeft: "auto",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                ✓ Sur invitation
-              </span>
-            </div>
-
-            {/* Title */}
-            <p
-              style={{
-                fontSize: "14px",
-                fontWeight: 600,
-                color: "#262f2c",
-                margin: 0,
-              }}
-            >
-              {review.title}
-            </p>
-
-            {/* Body */}
-            <p
-              style={{
-                fontSize: "13px",
-                color: "#262f2c",
-                lineHeight: 1.4,
-                margin: 0,
-              }}
-            >
-              {review.body}
-            </p>
-
-            {/* Footer */}
-            <p
-              style={{
-                fontSize: "12px",
-                color: "#9ca3af",
-                margin: 0,
-              }}
-            >
-              {review.author}, {review.time}
-            </p>
+        {/* Score — ligne horizontale compacte */}
+        <div className="flex items-center" style={{ gap: "16px", marginBottom: "20px", flexWrap: "wrap" }}>
+          <div>
+            <p style={{ fontSize: "22px", fontWeight: 700, color: "#262f2c", margin: 0 }}>Excellent</p>
+            <p style={{ color: "#00b67a", fontSize: "18px", letterSpacing: "2px", margin: "2px 0 0" }}>★★★★★</p>
           </div>
-        ))}
+          <div style={{ width: "1px", height: "36px", background: "#e5e5e5", flexShrink: 0 }} />
+          <div>
+            <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+              Basé sur <strong><u>4 809 avis</u></strong>
+            </p>
+            <p style={{ fontSize: "14px", fontWeight: 600, color: "#191919", margin: "2px 0 0" }}>★ Trustpilot</p>
+          </div>
+        </div>
 
-        {/* Right arrow */}
-        <button
-          aria-label="Avis suivants"
-          className="hidden md:flex"
+        {/* Cartes — scroll horizontal, cartes adaptées au mobile */}
+        <div
+          className="hide-scrollbar"
           style={{
-            flexShrink: 0,
-            width: "36px",
-            height: "36px",
-            borderRadius: "9999px",
-            border: "1px solid #e5e5e5",
-            background: "#ffffff",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
+            display: "flex",
+            gap: "12px",
+            overflowX: "auto",
+            width: "100%",
+            minWidth: 0,
           }}
         >
-          <ChevronRight size={16} color="#262f2c" />
-        </button>
+          {reviews.map((review) => (
+            <div
+              key={review.id}
+              style={{
+                flex: "0 0 clamp(200px, 70vw, 260px)",
+                border: "1px solid #e5e5e5",
+                borderRadius: "10px",
+                padding: "14px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ color: "#00b67a", fontSize: "14px", letterSpacing: "1px" }}>★★★★★</span>
+                <span style={{ fontSize: "11px", color: "#9ca3af", whiteSpace: "nowrap" }}>✓ Sur invitation</span>
+              </div>
+              <p style={{ fontSize: "13px", fontWeight: 600, color: "#262f2c", margin: 0 }}>{review.title}</p>
+              <p style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.5, margin: 0 }}>{review.body}</p>
+              <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{review.author}, {review.time}</p>
+            </div>
+          ))}
+        </div>
+
       </div>
     </section>
   );
