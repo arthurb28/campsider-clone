@@ -502,53 +502,39 @@ const AVIS_REPRISE = [
 ];
 
 function TrustpilotRepriseSection() {
-  const [offset, setOffset] = React.useState(0);
-  const visible = 3;
-  const max = AVIS_REPRISE.length - visible;
-
-  function prev() { setOffset(o => Math.max(0, o - 1)); }
-  function next() { setOffset(o => Math.min(max, o + 1)); }
-
   return (
-    <section style={{ backgroundColor: "white", padding: "28px 24px", borderBottom: "1px solid #e5e5e5" }}>
-      <div style={{ maxWidth: "1360px", margin: "0 auto", display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+    <section style={{ backgroundColor: "white", padding: "24px 24px", borderBottom: "1px solid #e5e5e5", width: "100%", overflow: "hidden" }}>
+      <div style={{ maxWidth: "1360px", margin: "0 auto", width: "100%" }}>
 
-        {/* Score Trustpilot compact */}
-        <div style={{ flexShrink: 0, display: "flex", alignItems: "center", gap: "10px" }}>
+        {/* Score compact */}
+        <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
           <div>
-            <p style={{ fontSize: "14px", fontWeight: 800, color: "#262f2c", margin: 0 }}>Excellent</p>
+            <p style={{ fontSize: "16px", fontWeight: 800, color: "#262f2c", margin: 0 }}>Excellent</p>
             <p style={{ color: "#00b67a", fontSize: "14px", letterSpacing: "1px", margin: "1px 0 0" }}>★★★★★</p>
           </div>
-          <div style={{ width: "1px", height: "30px", backgroundColor: "#e5e5e5" }} />
+          <div style={{ width: "1px", height: "30px", backgroundColor: "#e5e5e5", flexShrink: 0 }} />
           <div>
             <p style={{ fontSize: "11px", color: "#6b7280", margin: 0 }}>4 809 avis</p>
             <p style={{ fontSize: "12px", fontWeight: 700, color: "#191919", margin: "2px 0 0" }}>★ Trustpilot</p>
           </div>
         </div>
 
-        {/* Cartes défilantes */}
-        <div style={{ flex: 1, display: "flex", alignItems: "center", gap: "8px", minWidth: 0, overflow: "hidden" }}>
-          <button onClick={prev} disabled={offset === 0} aria-label="Précédent"
-            style={{ flexShrink: 0, width: "28px", height: "28px", borderRadius: "50%", border: "1px solid #e5e5e5", background: offset === 0 ? "#f5f5f5" : "white", cursor: offset === 0 ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: offset === 0 ? "#ccc" : "#262f2c" }}
-          >‹</button>
-
-          <div style={{ flex: 1, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", minWidth: 0 }}>
-            {AVIS_REPRISE.slice(offset, offset + visible).map(avis => (
-              <div key={avis.id} style={{ border: "1px solid #e5e5e5", borderRadius: "8px", padding: "12px 14px", display: "flex", flexDirection: "column", gap: "4px", minWidth: 0 }}>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                  <span style={{ color: "#00b67a", fontSize: "12px", letterSpacing: "1px" }}>★★★★★</span>
-                  <span style={{ fontSize: "10px", color: "#9ca3af" }}>✓ Sur invitation</span>
-                </div>
-                <p style={{ fontSize: "13px", fontWeight: 700, color: "#262f2c", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{avis.title}</p>
-                <p style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.4, margin: 0, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{avis.body}</p>
-                <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{avis.author} · {avis.time}</p>
+        {/* Cartes — scroll horizontal natif */}
+        <div
+          className="hide-scrollbar"
+          style={{ display: "flex", gap: "12px", overflowX: "auto", width: "100%", minWidth: 0 }}
+        >
+          {AVIS_REPRISE.map(avis => (
+            <div key={avis.id} style={{ flex: "0 0 clamp(220px, 70vw, 280px)", border: "1px solid #e5e5e5", borderRadius: "10px", padding: "14px", display: "flex", flexDirection: "column", gap: "6px" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ color: "#00b67a", fontSize: "13px", letterSpacing: "1px" }}>★★★★★</span>
+                <span style={{ fontSize: "10px", color: "#9ca3af", whiteSpace: "nowrap" }}>✓ Sur invitation</span>
               </div>
-            ))}
-          </div>
-
-          <button onClick={next} disabled={offset >= max} aria-label="Suivant"
-            style={{ flexShrink: 0, width: "28px", height: "28px", borderRadius: "50%", border: "1px solid #e5e5e5", background: offset >= max ? "#f5f5f5" : "white", cursor: offset >= max ? "not-allowed" : "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", color: offset >= max ? "#ccc" : "#262f2c" }}
-          >›</button>
+              <p style={{ fontSize: "13px", fontWeight: 700, color: "#262f2c", margin: 0 }}>{avis.title}</p>
+              <p style={{ fontSize: "12px", color: "#4b5563", lineHeight: 1.5, margin: 0 }}>{avis.body}</p>
+              <p style={{ fontSize: "11px", color: "#9ca3af", margin: 0 }}>{avis.author} · {avis.time}</p>
+            </div>
+          ))}
         </div>
 
       </div>
