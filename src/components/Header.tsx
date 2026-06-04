@@ -66,8 +66,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
             type="text"
             placeholder="Rechercher un produit, une marque…"
             className="flex-1 border-none outline-none bg-transparent"
-            style={{ fontSize: "14px", color: "#262f2c" }}
-            autoFocus
+            style={{ fontSize: "16px", color: "#262f2c" }}
           />
           <Search size={16} style={{ color: "#9ca3af" }} />
         </div>
@@ -124,7 +123,7 @@ function MainHeader({ onMenuOpen }: { onMenuOpen: () => void }) {
             type="text"
             placeholder="Rechercher un produit, une marque…"
             className="flex-1 border-none outline-none bg-transparent"
-            style={{ fontSize: "14px", color: "#262f2c" }}
+            style={{ fontSize: "16px", color: "#262f2c" }}
           />
           <Search size={18} style={{ color: "#9ca3af" }} />
         </div>
@@ -161,7 +160,7 @@ function MobileSearchBar() {
           type="text"
           placeholder="Rechercher un produit, une marque…"
           className="flex-1 border-none outline-none bg-transparent"
-          style={{ fontSize: "14px", color: "#262f2c" }}
+          style={{ fontSize: "16px", color: "#262f2c" }}
         />
       </div>
     </div>
