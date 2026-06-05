@@ -45,6 +45,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
   const [marqueAutre, setMarqueAutre] = useState("");
   const [modele, setModele] = useState("");
   const [annee, setAnnee] = useState("");
+  const [prix, setPrix] = useState("");
   const [etat, setEtat] = useState("");
   const [motivation, setMotivation] = useState("");
   const [email, setEmail] = useState("");
@@ -90,12 +91,13 @@ function FormModal({ onClose }: { onClose: () => void }) {
       if (!modele.trim()) e["modele"] = true;
       if (!annee) e["annee"] = true;
     }
-    if (etape === 3 && !etat) e["etat"] = true;
-    if (etape === 4) {
+    if (etape === 3 && !prix.trim()) e["prix"] = true;
+    if (etape === 4 && !etat) e["etat"] = true;
+    if (etape === 5) {
       if (!email.trim()) e["email"] = true;
       if (!tel.trim()) e["tel"] = true;
     }
-    if (etape === 5 && !motivation) e["motivation"] = true;
+    if (etape === 6 && !motivation) e["motivation"] = true;
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -109,7 +111,7 @@ function FormModal({ onClose }: { onClose: () => void }) {
     fd.append("motivation", motivation);
     fd.append("marque", marque); fd.append("modele", modele);
     fd.append("annee", annee); fd.append("etat", etat);
-    fd.append("prix", ""); fd.append("localisation", localisation);
+    fd.append("prix", prix); fd.append("localisation", localisation);
     fd.append("email", email); fd.append("tel", tel);
     fd.append("infos", infos);
     const pf = photosRef.current?.files;
@@ -272,8 +274,34 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 3 : État général ── */}
+            {/* ── ÉTAPE 3 : Prix d'achat ── */}
             {etape === 3 && (
+              <div>
+                <div style={{ marginBottom: "28px" }}>
+                  <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>
+                    Quel était le prix d&apos;achat de votre vélo ?
+                  </h2>
+                  <p style={{ fontSize: "15px", color: "#6b7280" }}>Cela nous aide à estimer la valeur de revente.</p>
+                </div>
+                <div style={FG}>
+                  <label style={LABEL}>Prix d&apos;achat (€) *</label>
+                  <input
+                    type="number"
+                    placeholder="ex : 2 500"
+                    min="0"
+                    value={prix}
+                    style={f(!!errors["prix"])}
+                    onChange={(e) => { setPrix(e.target.value); clr("prix"); }}
+                  />
+                </div>
+                {errors["prix"] && <ErrMsg msg="Veuillez indiquer le prix d'achat de votre vélo." />}
+                <BtnNext label="Continuer →" />
+                <div style={{ textAlign: "center" }}><BtnBack /></div>
+              </div>
+            )}
+
+            {/* ── ÉTAPE 4 : État général ── */}
+            {etape === 4 && (
               <div>
                 <div style={{ marginBottom: "28px" }}>
                   <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>
@@ -310,8 +338,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 4 : Coordonnées ── */}
-            {etape === 4 && (
+            {/* ── ÉTAPE 5 : Coordonnées ── */}
+            {etape === 5 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Vos coordonnées</h2>
                 <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Pour qu&apos;un expert vous recontacte sous 48h.</p>
@@ -338,8 +366,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 5 : Motivation ── */}
-            {etape === 5 && (
+            {/* ── ÉTAPE 6 : Motivation ── */}
+            {etape === 6 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "6px" }}>Pourquoi souhaitez-vous vendre votre vélo ?</h2>
                 <p style={{ fontSize: "15px", color: "#6b7280", marginBottom: "24px" }}>Cela nous aide à vous proposer la meilleure offre.</p>
@@ -376,8 +404,8 @@ function FormModal({ onClose }: { onClose: () => void }) {
               </div>
             )}
 
-            {/* ── ÉTAPE 6 : Infos complémentaires ── */}
-            {etape === 6 && (
+            {/* ── ÉTAPE 7 : Infos complémentaires ── */}
+            {etape === 7 && (
               <div>
                 <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#262f2c", marginBottom: "4px" }}>
                   Pour aller plus loin <span style={{ fontSize: "16px", fontWeight: 400, color: "#6b7280" }}>(facultatif)</span>
